@@ -1,6 +1,22 @@
 import { main } from "../main";
 
-test("Expected Final putput", () => {
+import { TipCalculator } from "../main";
+const instanceofTipCalculator = new TipCalculator(50, 15, true, 2);
+
+test("Expected tip amount", () => {
+  const result = (instanceofTipCalculator as any).calculateTip();
+  expect(result).toBe(7.5);
+});
+
+test("Expected total amount", () => {
+  expect(instanceofTipCalculator.calculateTotal()).toBe(57.5);
+});
+
+test("Expected amount per person", () => {
+  expect(instanceofTipCalculator.calculateAmountPerPerson()).toBe(28.75);
+});
+
+test("Expected final output", () => {
   expect(main()).toBe(`
     --- Tip Calculation Summary ---
     Check Amount: $50.00

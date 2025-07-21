@@ -1,8 +1,10 @@
-class TipCalculator {
+export class TipCalculator {
   private checkAmount: number;
   private tipPercentage: number;
   private isDivided: boolean;
   private numPeople: number;
+  private tip: number;
+  private totalAmount: number;
 
   constructor(
     checkAmount: number,
@@ -14,18 +16,22 @@ class TipCalculator {
     this.tipPercentage = tipPercentage;
     this.isDivided = isDivided;
     this.numPeople = numPeople;
+    this.tip = this.calculateTip();
+    this.totalAmount = this.calculateTotal();
   }
 
-  private calculateTip(checkAmount: number, tipPercentage: number): number {
-    return checkAmount * (tipPercentage / 100);
+  private calculateTip(): number {
+    return this.checkAmount * (this.tipPercentage / 100);
   }
 
-  calculateTotal(tip: number, checkAmount: number): number {
-    return tip + checkAmount;
+  calculateTotal(): number {
+    return this.tip + this.checkAmount;
   }
 
-  calculateAmountPerPerson(totalAmount: number, numPeople: number): number {
-    return parseFloat((totalAmount / numPeople).toFixed(2));
+  calculateAmountPerPerson(): number {
+    const raw = this.totalAmount / this.numPeople;
+    const roundedUp = Math.ceil(raw * 100) / 100;
+    return parseFloat(roundedUp.toFixed(2));
   }
 }
 
