@@ -1,0 +1,27 @@
+{
+  "name": "console-tip-generator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flpasc/console-tip-generator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flpasc/console-tip-generator/issues"
+  },
+  "homepage": "https://github.com/flpasc/console-tip-generator#readme",
+  "description": "",
+  "dependencies": {
+    "co-prompt": "^1.0.0",
+    "jest": "^30.0.4",
+    "typescript": "^5.8.3"
+  }
+}
