@@ -21,16 +21,53 @@ export class TipCalculator {
         return parseFloat(roundedUp.toFixed(2));
     }
     toString() {
+        const splitInfo = this.isDivided
+            ? `
+	Divide among people: yes
+	Split between how many people: ${this.numPeople}
+	Each person pays: $${this.calculateAmountPerPerson()}`
+            : '';
         return `
-    --- Tip Calculation Summary ---
-    Check Amount: $${this.checkAmount.toFixed(2)}
-    Tip Percentage: ${this.tipPercentage}%
-    Tip Amount: $${this.tip.toFixed(2)}
-    Total Bill: $${this.totalAmount.toFixed(2)}
-    Divide among people: ${this.isDivided ? 'yes' : 'no'}
-    Split between how many people: ${this.numPeople}
-    Each person pays: $${this.calculateAmountPerPerson()}
-    -----------------------------`;
+	--- Tip Calculation Summary ---
+	Check Amount: $${this.checkAmount.toFixed(2)}
+	Tip Percentage: ${this.tipPercentage}%
+	Tip Amount: $${this.tip.toFixed(2)}
+	Total Bill: $${this.totalAmount.toFixed(2)}${splitInfo}
+	-----------------------------`;
+    }
+}
+export class InputValidator {
+    isCurrency(input) {
+        try {
+            const isInputValid = input.match(/(?=.*?\d)^\$?(([1-9]\d{0,2}(,\d{3})*)|\d+)?(\.\d{1,2})?$/);
+            return isInputValid != null;
+        }
+        catch (error) {
+            return false;
+        }
+    }
+    isNumeric(input) {
+        try {
+            const isInputValid = input.match(/^\d+$/);
+            return isInputValid != null;
+        }
+        catch (error) {
+            return false;
+        }
+    }
+    isYesOrNo(input) {
+        return input === 'yes' || input === 'y' || input === 'no' || input === 'n';
+    }
+    validate(type, input) {
+        if (type === 'isNumeric')
+            return this.isNumeric(input);
+        else if (type === 'isYesOrNo')
+            return this.isYesOrNo(input);
+        else if (type === 'isCurrency')
+            return this.isCurrency(input);
+        else {
+            return false;
+        }
     }
 }
 export function main() {
@@ -48,26 +85,35 @@ export function main() {
 }
 export class InputHandler {
     constructor() {
-        this.question = "How high is the check?";
+        this.question = 'How high is the check? ';
+        this.validator = new InputValidator();
     }
-    showInput(question) {
-        const result = readlineSync.question(question);
+    showInput(question, type) {
+        let result = readlineSync.question(question);
+        let validationResult = this.validator.validate(type, result);
+        while (!validationResult) {
+            let newInput = readlineSync.question('Please enter a valid input: ');
+            validationResult = this.validator.validate(type, newInput);
+            if (validationResult)
+                result = newInput;
+        }
         return result;
     }
     isConfirmed(input) {
-        return input === 'yes';
+        return input === 'yes' || input === 'y';
     }
 }
 const input = new InputHandler();
-let checkAmountString = input.showInput("How high is the check?");
-let checkAmount = Number.parseInt(checkAmountString);
-let tipPercentageString = input.showInput("What percentage of tip will you give?");
-let tipPercentage = Number.parseInt(tipPercentageString);
-const splitInput = input.showInput("Should the bill be split among multiple people?");
+const checkAmountString = input.showInput('How high is the check? ', 'isCurrency');
+const checkAmount = Number.parseFloat(checkAmountString);
+const tipPercentageString = input.showInput('What percentage of tip will you give? ', 'isNumeric');
+const tipPercentage = Number.parseInt(tipPercentageString);
+const splitInput = input.showInput('Should the bill be split among multiple people? ', 'isYesOrNo');
+console.log('SplitInput:', splitInput);
 let confirmed = input.isConfirmed(splitInput);
 let tipCalculator;
 if (confirmed) {
-    let numberOfPeopleString = input.showInput("How many people will split the bill?");
+    let numberOfPeopleString = input.showInput('How many people will split the bill? ', 'isNumeric');
     let numberOfPeople = Number.parseInt(numberOfPeopleString);
     tipCalculator = new TipCalculator(checkAmount, tipPercentage, confirmed, numberOfPeople);
 }
